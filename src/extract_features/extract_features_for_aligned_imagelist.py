@@ -247,8 +247,8 @@ def main(args):
 def parse_args(argv):
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--image-list', type=int, help='image list file')
-    parser.add_argument('--image-dir', type=int,
+    parser.add_argument('--image-list', type=str, help='image list file')
+    parser.add_argument('--image-dir', type=str,
                         help='image root dir if image list contains relative paths')
     parser.add_argument('--save-dir', type=str, default='./rlt-features',
                         help='where to save the features')

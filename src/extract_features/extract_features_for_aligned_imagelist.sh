@@ -1,4 +1,4 @@
-nohup python extract_features_for_aligned_imagelist \
+nohup python extract_features_for_aligned_imagelist.py \
     --model=../../models/model-r50-am-lfw/model,0 \
     --image-list= /disk2/data/FACE/face-idcard-1M/face-idcard-1M-image-list.txt \
     --image-dir=/disk2/data/FACE/face-idcard-1M/face-idcard-1M-mtcnn-aligned-112x112 \
