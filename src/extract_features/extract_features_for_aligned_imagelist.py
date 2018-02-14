@@ -4,29 +4,20 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+import sys
+import os.path as osp
+
 # os.environ["CUDA_VISIBLE_DEVICES"] = "7"
 
-from datetime import datetime
-import os.path as osp
-from easydict import EasyDict as edict
-import time
-import json
-import sys
-import numpy as np
-import importlib
-import itertools
 import argparse
 import struct
+
+import numpy as np
 import cv2
-sys.path.append(osp.join(osp.dirname(__file__), '..', 'common'))
-# import face_preprocess
-from sklearn.preprocessing import normalize
-# import facenet
-# import lfw
+from easydict import EasyDict as edict
+
 import _init_paths
 import mxnet as mx
-from mxnet import ndarray as nd
-# from caffe.proto import caffe_pb2
 
 from matio import save_mat
 from compare_feats import calc_similarity_cosine
@@ -92,12 +83,18 @@ def load_image_data(image_path, input_blob, idx, image_shape, use_mean=True):
 def add_flip_to_input_blob(input_blob):
     batch_size = int(input_blob.shape[0] / 2)
     for i in range(batch_size):
-        input_blob[i + batch_size] = input_blob[i]
-        do_flip(input_blob[i + batch_size])
+        input_blob[i + batch_size - 1] = input_blob[i]
+        do_flip(input_blob[i + batch_size - 1])
 
 
-def get_features(input_blob, nets, add_flip=False, flip_sim=False):
-    n_imgs = input_blob.shape[0]
+def get_features(input_blob, nets, n_imgs=None, add_flip=False, flip_sim=False):
+    if not n_imgs:
+        n_imgs = input_blob.shape[0]
+        if add_flip:
+            n_imgs = int(n_imgs / 2)
+
+    # print('n_imgs: ', n_imgs)
+
     data = mx.nd.array(input_blob)
     db = mx.io.DataBatch(data=(data,))
 
@@ -105,13 +102,14 @@ def get_features(input_blob, nets, add_flip=False, flip_sim=False):
 
     for i, net in enumerate(nets):
         net.model.forward(db, is_train=False)
-        outputs = net.model.get_outputs()
+        outputs = net.model.get_outputs()[0]
+        # print('outputs.shape: ', outputs.shape)
 
         for j in range(n_imgs):
             embedding = outputs[j].asnumpy().flatten()
 
             if add_flip:
-                embedding_flip = outputs[j + n_imgs].asnumpy().flatten()
+                embedding_flip = outputs[j + n_imgs - 1].asnumpy().flatten()
                 if flip_sim:
                     sim = calc_similarity_cosine(embedding, embedding_flip)
                     print('---> Net #%d, flip_sim=%f\n' % (i, sim))
@@ -120,18 +118,22 @@ def get_features(input_blob, nets, add_flip=False, flip_sim=False):
             _norm = np.linalg.norm(embedding)
             if _norm > 0:
                 embedding /= _norm
+
             if i == 0:
                 features.append(embedding)
+                # print('len(features): ', len(features))
             else:
                 # features[j] += embedding
                 features[j] = np.concatenate((features[j], embedding), axis=0)
 
+    # print('len(features): ', len(features))
+
     for j in range(n_imgs):
-        _norm = np.linalg.norm()
+        _norm = np.linalg.norm(features[j])
         if _norm > 0:
             features[j] /= _norm
 
-    return features, suc_flags
+    return features
 
 
 def write_bin(path, feature):
@@ -201,6 +203,7 @@ def main(args):
 
     i = 0
     succ = 0
+    batch_cnt = 0
 
     for line in open(img_list_fn, 'r'):
         if i % 1000 == 0:
@@ -210,7 +213,7 @@ def main(args):
 
         image_path = line.strip()
         full_path = osp.join(args.image_dir, image_path)
-        print('---> Processing', full_path)
+        print('---> Loading ', full_path)
 
         ret = load_image_data(full_path, input_blob,
                               succ, image_shape, args.use_mean)
@@ -228,7 +231,11 @@ def main(args):
             if args.add_flip:
                 add_flip_to_input_blob(input_blob)
 
-            features, suc_flags = get_features(input_blob, nets, args.add_flip, args.flip_sim)
+            batch_cnt += 1
+            print('---> Get features for batch #', batch_cnt)
+
+            features = get_features(input_blob, nets, len(img_list),
+                                    args.add_flip, args.flip_sim)
 
             for j, fn in enumerate(img_list):
                 a, b = osp.split(fn)
@@ -251,11 +258,16 @@ def main(args):
         if args.add_flip:
             add_flip_to_input_blob(input_blob)
 
-        features, suc_flags = get_features(input_blob, nets)
+        batch_cnt += 1
+        print('---> Get features for batch #', batch_cnt)
+
+        features = get_features(input_blob, nets, len(img_list),
+                                args.add_flip, args.flip_sim)
 
         for j, fn in enumerate(img_list):
             a, b = osp.split(fn)
             sub_dir = osp.join(args.save_dir, a)
+
             if not osp.exists(sub_dir):
                 os.makedirs(sub_dir)
 
