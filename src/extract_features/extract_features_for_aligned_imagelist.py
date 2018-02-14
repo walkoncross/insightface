@@ -23,6 +23,7 @@ import face_preprocess
 from sklearn.preprocessing import normalize
 # import facenet
 # import lfw
+import _init_paths
 import mxnet as mx
 from mxnet import ndarray as nd
 # from caffe.proto import caffe_pb2
