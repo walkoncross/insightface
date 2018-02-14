@@ -33,9 +33,9 @@ from compare_feats import calc_similarity_cosine
 
 
 if cv2.__version__.startswith('3.'):
-    IMREAD_AS_GRAY = CV2.IMREAD_GRAYSCALE
+    IMREAD_AS_GRAY = cv2.IMREAD_GRAYSCALE
     IMREAD_AS_COLOR = cv2.IMREAD_COLOR
-elif:
+else:
     IMREAD_AS_GRAY = cv2.CV_LOAD_IMAGE_GRAYSCALE
     IMREAD_AS_COLOR = cv2.CV_LOAD_IMAGE_COLOR
 
@@ -69,7 +69,7 @@ def init_input_blob(batch_size, image_shape):
 
 def load_image_data(image_path, input_blob, idx, image_shape, use_mean=True):
 
-    img = face_preprocess.read_image(image_path, mode='rgb')
+    img = read_image(image_path, mode='rgb')
     # print(img.shape)
     if img is None:
         print('parse image', image_path, 'error')
@@ -90,15 +90,16 @@ def load_image_data(image_path, input_blob, idx, image_shape, use_mean=True):
 
 
 def add_flip_to_input_blob(input_blob):
-    batch_size = input_blob.shape[0] / 2
+    batch_size = int(input_blob.shape[0] / 2)
     for i in range(batch_size):
         input_blob[i + batch_size] = input_blob[i]
         do_flip(input_blob[i + batch_size])
 
 
-def get_feature(input_blob, nets, flip_sim=False):
+def get_features(input_blob, nets, add_flip=False, flip_sim=False):
+    n_imgs = input_blob.shape[0]
     data = mx.nd.array(input_blob)
-    db = mx.io.DataBatch(data=data)
+    db = mx.io.DataBatch(data=(data,))
 
     features = []
 
@@ -209,6 +210,7 @@ def main(args):
 
         image_path = line.strip()
         full_path = osp.join(args.image_dir, image_path)
+        print('---> Processing', full_path)
 
         ret = load_image_data(full_path, input_blob,
                               succ, image_shape, args.use_mean)
@@ -226,7 +228,7 @@ def main(args):
             if args.add_flip:
                 add_flip_to_input_blob(input_blob)
 
-            features, suc_flags = get_feature(input_blob, nets)
+            features, suc_flags = get_features(input_blob, nets, args.add_flip, args.flip_sim)
 
             for j, fn in enumerate(img_list):
                 a, b = osp.split(fn)
@@ -249,7 +251,7 @@ def main(args):
         if args.add_flip:
             add_flip_to_input_blob(input_blob)
 
-        features, suc_flags = get_feature(input_blob, nets)
+        features, suc_flags = get_features(input_blob, nets)
 
         for j, fn in enumerate(img_list):
             a, b = osp.split(fn)
