@@ -12,5 +12,5 @@ nohup python extract_features_for_aligned_imagelist.py \
     --gpu=0 \
     --save-format=.bin \
     --use-mean \
-    # --flip-sim > \
-    nohup-extract-log.txt &
+    # --flip-sim  \
+        > nohup-extract-log.txt &
