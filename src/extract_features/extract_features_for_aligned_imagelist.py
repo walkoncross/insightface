@@ -32,12 +32,12 @@ from matio import save_mat
 from compare_feats import calc_similarity_cosine
 
 
-IMREAD_AS_GRAY = cv2.CV_LOAD_IMAGE_GRAYSCALE
-IMREAD_AS_COLOR = cv2.CV_LOAD_IMAGE_COLOR
-
 if cv2.__version__.startswith('3.'):
     IMREAD_AS_GRAY = CV2.IMREAD_GRAYSCALE
     IMREAD_AS_COLOR = cv2.IMREAD_COLOR
+elif:
+    IMREAD_AS_GRAY = cv2.CV_LOAD_IMAGE_GRAYSCALE
+    IMREAD_AS_COLOR = cv2.CV_LOAD_IMAGE_COLOR
 
 
 def read_image(img_path, **kwargs):
