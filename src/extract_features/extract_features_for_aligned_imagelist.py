@@ -161,7 +161,7 @@ def main(args):
 
     batch_size = args.batch_size
     if args.add_flip:
-        batch_size = int(args.batch_size / 2)
+        batch_size = int(batch_size / 2)
 
     if batch_size < 1:
         batch_size = 1
@@ -202,12 +202,13 @@ def main(args):
     input_blob = init_input_blob(input_batch_size, image_shape)
 
     i = 0
-    succ = 0
+    load_idx = 0
     batch_cnt = 0
 
     for line in open(img_list_fn, 'r'):
         if i % 1000 == 0:
-            print("===> Processed %d images, %d succeeded" % (i, succ))
+            print("===> Try to process %d images, %d succeed"
+                  % (i, batch_cnt * batch_size + load_idx))
 
         i += 1
 
@@ -216,16 +217,17 @@ def main(args):
         print('---> Loading ', full_path)
 
         ret = load_image_data(full_path, input_blob,
-                              succ, image_shape, args.use_mean)
+                              load_idx, image_shape, args.use_mean)
+        load_idx += 1
+
         if not ret:
             print('---> Failed to load: ', full_path)
             fail_fp.write(image_path + '\n')
             continue
 
-        succ += 1
         img_list.append(image_path)
 
-        if i == batch_size:
+        if load_idx == batch_size:
             fail_fp.flush()
 
             if args.add_flip:
@@ -252,13 +254,14 @@ def main(args):
                     save_mat(out_path, features[j])
 
             img_list = []
+            load_idx = 0
 
     if len(img_list) > 1:
-        print("===> Processed %d images, %d succeeded" % (i, succ))
+        print("===> Try to process %d images, %d succeed"
+              % (i, batch_cnt * batch_size + load_idx))
         if args.add_flip:
             add_flip_to_input_blob(input_blob)
 
-        batch_cnt += 1
         print('---> Get features for batch #', batch_cnt)
 
         features = get_features(input_blob, nets, len(img_list),
