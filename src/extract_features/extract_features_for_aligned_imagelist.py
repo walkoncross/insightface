@@ -38,7 +38,7 @@ def do_flip(data):
 
 
 def init_input_blob(batch_size, image_shape):
-    input_shape = (batch_size, ) + image_shape
+    input_shape = (batch_size, image_shape[0], image_shape[1], image_shape[2])
     input_blob = np.zeros(input_shape, dtype=np.float32)
 
     return input_blob

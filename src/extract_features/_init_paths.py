@@ -9,5 +9,5 @@ def add_path(path):
 
 # set mxnet path
 # mxnet_path = '/opt/mxnet/python'
-mxnet_path = '/usr/local/lib/python2.7/dist-packages/mxnet'
+mxnet_path = '/usr/local/lib/python2.7/dist-packages'
 add_path(mxnet_path)

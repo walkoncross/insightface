@@ -1,3 +1,4 @@
+
 nohup python extract_features_for_aligned_imagelist.py \
     --model=../../models/model-r50-am-lfw/model,0 \
     --image-list=/disk2/data/FACE/face-idcard-1M/face-idcard-1M-image-list.txt \
@@ -9,4 +10,4 @@ nohup python extract_features_for_aligned_imagelist.py \
     --gpu=0 \
     --save-format=.bin \
     --use-mean \
-    --flip-sim > extract-log.txt &
+    --flip-sim > nohup-extract-log.txt &
