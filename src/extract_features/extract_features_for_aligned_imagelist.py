@@ -252,8 +252,8 @@ def parse_args(argv):
                         help='image root dir if image list contains relative paths')
     parser.add_argument('--save-dir', type=str, default='./rlt-features',
                         help='where to save the features')
-    parser.add_argument('--batch_size', type=int, help='', default=100)
-    parser.add_argument('--image_size', type=str,
+    parser.add_argument('--batch-size', type=int, help='', default=100)
+    parser.add_argument('--image-size', type=str,
                         help='', default='3,112,112')
     parser.add_argument('--add-flip', action='store_true',
                         help='use (oringal + flip)')
