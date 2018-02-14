@@ -19,7 +19,7 @@ import argparse
 import struct
 import cv2
 sys.path.append(osp.join(osp.dirname(__file__), '..', 'common'))
-import face_preprocess
+# import face_preprocess
 from sklearn.preprocessing import normalize
 # import facenet
 # import lfw
@@ -30,6 +30,29 @@ from mxnet import ndarray as nd
 
 from matio import save_mat
 from compare_feats import calc_similarity_cosine
+
+
+IMREAD_AS_GRAY = cv2.CV_LOAD_IMAGE_GRAYSCALE
+IMREAD_AS_COLOR = cv2.CV_LOAD_IMAGE_COLOR
+
+if cv2.__version__.startswith('3.'):
+    IMREAD_AS_GRAY = CV2.IMREAD_GRAYSCALE
+    IMREAD_AS_COLOR = cv2.IMREAD_COLOR
+
+
+def read_image(img_path, **kwargs):
+    mode = kwargs.get('mode', 'rgb')
+    layout = kwargs.get('layout', 'HWC')
+    if mode == 'gray':
+        img = cv2.imread(img_path, IMREAD_AS_GRAY)
+    else:
+        img = cv2.imread(img_path, IMREAD_AS_COLOR)
+        if mode == 'rgb':
+            #print('to rgb')
+            img = img[..., ::-1]
+        if layout == 'CHW':
+            img = np.transpose(img, (2, 0, 1))
+    return img
 
 
 def do_flip(data):
@@ -82,7 +105,7 @@ def get_feature(input_blob, nets, flip_sim=False):
     for i, net in enumerate(nets):
         net.model.forward(db, is_train=False)
         outputs = net.model.get_outputs()
-        
+
         for j in range(n_imgs):
             embedding = outputs[j].asnumpy().flatten()
 
@@ -90,7 +113,7 @@ def get_feature(input_blob, nets, flip_sim=False):
                 embedding_flip = outputs[j + n_imgs].asnumpy().flatten()
                 if flip_sim:
                     sim = calc_similarity_cosine(embedding, embedding_flip)
-                    print('---> Net #%d, flip_sim=%f\n' % (i,sim) )
+                    print('---> Net #%d, flip_sim=%f\n' % (i, sim))
                 embedding += embedding_flip
 
             _norm = np.linalg.norm(embedding)
@@ -135,7 +158,7 @@ def main(args):
 
     batch_size = args.batch_size
     if args.add_flip:
-        batch_size = int(args.batch_size) / 2
+        batch_size = int(args.batch_size / 2)
 
     if batch_size < 1:
         batch_size = 1
