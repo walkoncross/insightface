@@ -99,10 +99,10 @@ def load_verif_results_and_plot(save_dir, verif_rlt_fn=None, batchs_per_epoch=0)
         for i in range(1, 5):
             plt.plot(xx, data[:, 4 * i], colors[i], label=labels[i])
 
-        plt.plot(xx, data[:, -1], colors[-1], label=labels[-1])
+#        plt.plot(xx, data[:, -1], colors[-1], label=labels[-1])
 
         # plt.xlim([0, 1e8])
-        plt.ylim([0, 1])
+        plt.ylim([0.5, 1])
 
         plt.xlabel(x_label)
         plt.ylabel('verif acc')
