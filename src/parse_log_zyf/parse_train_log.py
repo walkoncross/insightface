@@ -84,7 +84,7 @@ def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
                     spl[1], spl[2], spl[3], spl[4]
                 )
 
-                if spl[1]=='0' and int(spl[2]) > batches_per_epoch:
+                if spl[1] == '0' and int(spl[2]) > batches_per_epoch:
                     batches_per_epoch = int(spl[2])
 
             if save_train_detail:
@@ -124,7 +124,7 @@ def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
         if 'Accuracy-Highest:' in line:
             verif_write_string += '\t{:10}\n'.format(line.split()[-1])
             fp_out_verif.write('{:5.2f}\t{:10}\t{:10}'.format(
-                float(test_batch_idx)/batches_per_epoch,  test_batch_idx, verif_acc_avg / verif_db_cnt) + verif_write_string)
+                float(test_batch_idx) / batches_per_epoch,  test_batch_idx, verif_acc_avg / verif_db_cnt) + verif_write_string)
 
             verif_write_string = ''
             verif_acc_avg = 0.0
@@ -149,11 +149,11 @@ def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
 
 if __name__ == '__main__':
 
-   args = parse_args()
-   print('input args:', args)
+    args = parse_args()
+    print('input args:', args)
 
-   log_fn = args.log_path
-   save_train_detail = args.save_train_detail
+    log_fn = args.log_path
+    save_train_detail = args.save_train_detail
 
     # log_fn = './train-log-r100-0221.txt'
     # save_train_detail = False
@@ -161,6 +161,7 @@ if __name__ == '__main__':
     if args.save_dir:
         save_dir = args.save_dir
     else:
-        save_dir = './rlt_parse_log-' + osp.splitext(osp.basename(log_fn))[0]
+        save_dir = './rlt_parse_log-' + \
+            osp.splitext(osp.basename(log_fn))[0]
 
     parse_train_log(log_fn, save_dir, save_train_detail)
