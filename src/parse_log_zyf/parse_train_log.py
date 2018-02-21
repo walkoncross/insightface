@@ -25,8 +25,6 @@ def parse_args():
                         help='where to save parse results')
     parser.add_argument('--save-train-detail', action='store_true',
                         help='where to save parse results')
-    parser.add_argument('--batchs-per-epoch', type=int, default=0,
-                        help='batches in each epoch, see your train-log to get this value')
 
     args = parser.parse_args()
     return args
@@ -40,6 +38,8 @@ def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
         os.makedirs(save_dir)
 
     fp = open(log_fn, 'r')
+
+    batches_per_epoch = 0
 
     fp_out_train_detail = None
     if save_train_detail:
@@ -78,11 +78,16 @@ def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
         line_cnt += 1
 
         if line.startswith('INFO:root:Epoch'):
-            if save_train_detail and 'Batch' in line:
+            if 'Batch' in line:
                 spl = re.split('[^0-9.]+', line)
                 write_string = '\t{:10}\t{:10}\t{:10}\t{:10}\n'.format(
                     spl[1], spl[2], spl[3], spl[4]
                 )
+
+                if int(spl[2]) > batches_per_epoch:
+                    batches_per_epoch = int(spl[2])
+
+            if save_train_detail:
                 fp_out_train_detail.write(write_string)
 
             if 'Train-acc' in line:
@@ -137,6 +142,9 @@ def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
     fp_out_verif.close()
     if save_train_detail:
         fp_out_train_detail.close()
+
+    print('===> batches_per_epoch: ', batches_per_epoch)
+    return batches_per_epoch
 
 
 if __name__ == '__main__':

@@ -23,8 +23,6 @@ def parse_args():
                         help='where to save parse results')
     parser.add_argument('--save-train-detail', action='store_true',
                         help='where to save parse results')
-    parser.add_argument('--batchs-per-epoch', type=int, default=0,
-                        help='batches in each epoch, see your train-log to get this value')
 
     args = parser.parse_args()
     return args
@@ -36,11 +34,9 @@ if __name__ == '__main__':
     print('input args:', args)
 
     log_fn = args.log_path
-    batchs_per_epoch = args.batchs_per_epoch
     save_train_detail = args.save_train_detail
 
     # log_fn = './train-log-r100-0221.txt'
-    # batchs_per_epoch = 7920
     # save_train_detail = False
 
     if args.save_dir:
@@ -48,5 +44,5 @@ if __name__ == '__main__':
     else:
         save_dir = './rlt_parse_log-' + osp.splitext(osp.basename(log_fn))[0]
 
-    parse_train_log(log_fn, save_dir, save_train_detail)
-    load_results_and_plot(save_dir, batchs_per_epoch)
+    batches_per_epoch = parse_train_log(log_fn, save_dir, save_train_detail)
+    load_results_and_plot(save_dir, batches_per_epoch)
