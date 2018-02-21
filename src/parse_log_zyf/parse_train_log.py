@@ -19,7 +19,7 @@ rlt_verif_basename = 'verif_acc.txt'
 def parse_args():
     parser = argparse.ArgumentParser(description='Parse and Plot train log')
     # general
-    parser.add_argument('--log-path', default='./train-log.txt',
+    parser.add_argument('log_path', default='./train-log.txt',
                         help='path to log')
     parser.add_argument('--save-dir', default='',
                         help='where to save parse results')

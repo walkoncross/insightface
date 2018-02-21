@@ -17,7 +17,7 @@ from plot_parse_results import load_results_and_plot
 def parse_args():
     parser = argparse.ArgumentParser(description='Parse and Plot train log')
     # general
-    parser.add_argument('--log-path', default='./rlt_parse_log',
+    parser.add_argument('log_path', default='./rlt_parse_log',
                         help='path to log')
     parser.add_argument('--save-dir', default='',
                         help='where to save parse results')

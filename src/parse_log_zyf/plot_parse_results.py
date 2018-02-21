@@ -25,7 +25,7 @@ rlt_verif_basename = 'verif_acc.txt'
 def parse_args():
     parser = argparse.ArgumentParser(description='Parse and Plot train log')
     # general
-    parser.add_argument('--save-dir', default='./rlt_parse_log',
+    parser.add_argument('save_dir', default='./rlt_parse_log',
                         help='where the parsed results are saved')
     parser.add_argument('--batchs-per-epoch', type=int, default=0,
                         help='batches in each epoch, see your train-log to get this value')
