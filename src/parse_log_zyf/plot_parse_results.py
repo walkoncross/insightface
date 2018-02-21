@@ -97,7 +97,7 @@ def load_verif_results_and_plot(save_dir, verif_rlt_fn=None, batches_per_epoch=0
     labels = ['avg_dbs', 'lfw', 'cfp_ff', 'cfp_fp', 'age_db', 'age_db_highest']
 
     def plot_data(use_epoch_idx=False):
-        xx = data[:, 0]
+        xx = data[:, 1]
         if use_epoch_idx > 0:
             xx /= batches_per_epoch
             x_label = 'epoch'
@@ -106,10 +106,10 @@ def load_verif_results_and_plot(save_dir, verif_rlt_fn=None, batches_per_epoch=0
 
         fig = plt.figure(figsize=(16, 12), dpi=100)
 
-        plt.plot(xx, data[:, 1], colors[0], label=labels[0])
+        plt.plot(xx, data[:, 3], colors[0], label=labels[0])
 
         for i in range(1, 5):
-            plt.plot(xx, data[:, 4 * i], colors[i], label=labels[i])
+            plt.plot(xx, data[:, 4 * i + 1], colors[i], label=labels[i])
 
 #        plt.plot(xx, data[:, -1], colors[-1], label=labels[-1])
 

@@ -57,7 +57,7 @@ def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
     write_string = 'epoch\ttrain-acc\ttime-cost\n'
     fp_out_train.write(write_string)
 
-    write_string = 'batch\tacc_avg_verifDB'
+    write_string = 'epoch\tbatch\tacc_avg_verifDB'
     write_string += '\tinfer_time(lfw)\txnorm(lfw)\tacc(lfw)\tacc_std(lfw)'
     write_string += '\tinfer_time(cfp_ff)\txnorm(cfp_ff)\tacc(cfp_ff)\tacc_std(cfp_ff)'
     write_string += '\tinfer_time(cfp_fp)\txnorm(cfp_fp)\tacc(cfp_fp)\tacc_std(cfp_fp)'
@@ -84,7 +84,7 @@ def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
                     spl[1], spl[2], spl[3], spl[4]
                 )
 
-                if int(spl[2]) > batches_per_epoch:
+                if spl[1]=='0' and int(spl[2]) > batches_per_epoch:
                     batches_per_epoch = int(spl[2])
 
             if save_train_detail:
@@ -123,8 +123,8 @@ def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
 
         if 'Accuracy-Highest:' in line:
             verif_write_string += '\t{:10}\n'.format(line.split()[-1])
-            fp_out_verif.write('{:10}\t{:10}'.format(
-                test_batch_idx, verif_acc_avg / verif_db_cnt) + verif_write_string)
+            fp_out_verif.write('{:5.2f}\t{:10}\t{:10}'.format(
+                float(test_batch_idx)/batches_per_epoch,  test_batch_idx, verif_acc_avg / verif_db_cnt) + verif_write_string)
 
             verif_write_string = ''
             verif_acc_avg = 0.0
@@ -149,14 +149,14 @@ def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
 
 if __name__ == '__main__':
 
-    args = parse_args()
-    print('input args:', args)
+#    args = parse_args()
+#    print('input args:', args)
 
-    log_fn = args.log_path
-    save_train_detail = args.save_train_detail
+#    log_fn = args.log_path
+#    save_train_detail = args.save_train_detail
 
-    # log_fn = './train-log-r100-0221.txt'
-    # save_train_detail = False
+    log_fn = './train-log-r100-0221.txt'
+    save_train_detail = False
 
     if args.save_dir:
         save_dir = args.save_dir
