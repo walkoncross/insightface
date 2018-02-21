@@ -6,7 +6,7 @@ from scipy import misc
 import sys
 import os
 import argparse
-import tensorflow as tf
+# import tensorflow as tf
 import numpy as np
 import mxnet as mx
 import random
@@ -15,7 +15,7 @@ import sklearn
 from sklearn.decomposition import PCA
 from time import sleep
 from easydict import EasyDict as edict
-from mtcnn_detector import MtcnnDetector
+# from mtcnn_detector import MtcnnDetector
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src', 'common'))
 import face_image
 import face_preprocess
@@ -52,25 +52,25 @@ class FaceModel:
     model.bind(data_shapes=[('data', (1, 3, image_size[0], image_size[1]))])
     model.set_params(arg_params, aux_params)
     self.model = model
-    mtcnn_path = os.path.join(os.path.dirname(__file__), 'mtcnn-model')
-    detector = MtcnnDetector(model_folder=mtcnn_path, ctx=ctx, num_worker=1, accurate_landmark = True, threshold=[0.0,0.0,0.2])
-    self.detector = detector
+    # mtcnn_path = os.path.join(os.path.dirname(__file__), 'mtcnn-model')
+    # detector = MtcnnDetector(model_folder=mtcnn_path, ctx=ctx, num_worker=1, accurate_landmark = True, threshold=[0.0,0.0,0.2])
+    # self.detector = detector
 
 
   def get_feature(self, face_img):
     #face_img is bgr image
-    ret = self.detector.detect_face_limited(face_img, det_type = self.args.det)
-    if ret is None:
-      return None
-    bbox, points = ret
-    if bbox.shape[0]==0:
-      return None
-    bbox = bbox[0,0:4]
-    points = points[0,:].reshape((2,5)).T
-    #print(bbox)
-    #print(points)
-    nimg = face_preprocess.preprocess(face_img, bbox, points, image_size='112,112')
-    nimg = cv2.cvtColor(nimg, cv2.COLOR_BGR2RGB)
+    # ret = self.detector.detect_face_limited(face_img, det_type = self.args.det)
+    # if ret is None:
+    #   return None
+    # bbox, points = ret
+    # if bbox.shape[0]==0:
+    #   return None
+    # bbox = bbox[0,0:4]
+    # points = points[0,:].reshape((2,5)).T
+    # #print(bbox)
+    # #print(points)
+    # nimg = face_preprocess.preprocess(face_img, bbox, points, image_size='112,112')
+    nimg = cv2.cvtColor(face_img, cv2.COLOR_BGR2RGB)
     aligned = np.transpose(nimg, (2,0,1))
     #print(nimg.shape)
     embedding = None

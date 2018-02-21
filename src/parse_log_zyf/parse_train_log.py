@@ -124,7 +124,7 @@ def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
 
 
 if __name__ == '__main__':
-    log_fn = './train-log.txt'
+    log_fn = './train-log-r100-0221.txt'
     save_dir = './rlt_parse_log'
     save_train_detail = True
 

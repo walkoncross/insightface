@@ -122,6 +122,11 @@ def load_verif_results_and_plot(save_dir, verif_rlt_fn=None, batchs_per_epoch=0)
         plot_data(use_epoch_idx=True)
 
 
+def load_results_and_plot(save_dir, batchs_per_epoch=0):
+    load_verif_results_and_plot(save_dir, batchs_per_epoch=batchs_per_epoch)
+    load_train_results_and_plot(save_dir, batchs_per_epoch=batchs_per_epoch)
+
+
 if __name__ == '__main__':
     save_dir = './rlt_parse_log'
     batchs_per_epoch = 7920
