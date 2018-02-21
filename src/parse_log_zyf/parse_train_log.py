@@ -7,13 +7,29 @@ Created on Tue Feb 20 22:30:09 2018
 import os
 import sys
 import os.path as osp
-
+import argparse
 import re
 
 
 rlt_train_detail_basename = 'train_acc_detail.txt'
 rlt_train_basename = 'train_acc.txt'
 rlt_verif_basename = 'verif_acc.txt'
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='Parse and Plot train log')
+    # general
+    parser.add_argument('--log-path', default='./train-log.txt',
+                        help='path to log')
+    parser.add_argument('--save-dir', default='',
+                        help='where to save parse results')
+    parser.add_argument('--save-train-detail', action='store_true',
+                        help='where to save parse results')
+    parser.add_argument('--batchs-per-epoch', type=int, default=0,
+                        help='batches in each epoch, see your train-log to get this value')
+
+    args = parser.parse_args()
+    return args
 
 
 def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
@@ -124,17 +140,19 @@ def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
 
 
 if __name__ == '__main__':
-    log_fn = './train-log-r100-0221.txt'
-    save_dir = './rlt_parse_log'
-    save_train_detail = True
 
-    if len(sys.argv) > 1:
-        log_fn = sys.argv[1]
+    args = parse_args()
+    print('input args:', args)
 
-    if len(sys.argv) > 2:
-        save_dir = sys.argv[2]
+    log_fn = args.log_path
+    save_train_detail = args.save_train_detail
 
-    if len(sys.argv) > 3:
-        save_train_detail = True
+    # log_fn = './train-log-r100-0221.txt'
+    # save_train_detail = False
+
+    if args.save_dir:
+        save_dir = args.save_dir
+    else:
+        save_dir = './rlt_parse_log-' + osp.splitext(osp.basename(log_fn))[0]
 
     parse_train_log(log_fn, save_dir, save_train_detail)

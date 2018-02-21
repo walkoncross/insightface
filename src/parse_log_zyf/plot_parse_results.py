@@ -7,7 +7,7 @@ Created on Tue Feb 20 22:30:09 2018
 import os
 import sys
 import os.path as osp
-
+import argparse
 import re
 import numpy as np
 
@@ -20,6 +20,18 @@ from matplotlib import pyplot as plt
 rlt_train_detail_basename = 'train_acc_detail.txt'
 rlt_train_basename = 'train_acc.txt'
 rlt_verif_basename = 'verif_acc.txt'
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='Parse and Plot train log')
+    # general
+    parser.add_argument('--save-dir', default='./rlt_parse_log',
+                        help='where the parsed results are saved')
+    parser.add_argument('--batchs-per-epoch', type=int, default=0,
+                        help='batches in each epoch, see your train-log to get this value')
+
+    args = parser.parse_args()
+    return args
 
 
 def load_train_results_and_plot(save_dir, train_rlt_fn=None, batchs_per_epoch=0):
@@ -123,19 +135,26 @@ def load_verif_results_and_plot(save_dir, verif_rlt_fn=None, batchs_per_epoch=0)
 
 
 def load_results_and_plot(save_dir, batchs_per_epoch=0):
+    if not osp.exists(save_dir):
+        raise Exception('{} not found'.format(save_dir))
+
     load_verif_results_and_plot(save_dir, batchs_per_epoch=batchs_per_epoch)
     load_train_results_and_plot(save_dir, batchs_per_epoch=batchs_per_epoch)
 
 
 if __name__ == '__main__':
-    save_dir = './rlt_parse_log'
-    batchs_per_epoch = 7920
+    # log_fn = './train-log-r100-0221.txt'
+    # save_dir = './rlt_parse_log-' + osp.splitext(osp.basename(log_fn))[0]
+    # batchs_per_epoch = 7920
 
-    if len(sys.argv) > 1:
-        log_fn = sys.argv[1]
+    args = parse_args()
+    print('input args:', args)
 
-    if len(sys.argv) > 2:
-        batchs_per_epoch = int(sys.argv[2])
+    save_dir = args.save_dir
 
-    load_verif_results_and_plot(save_dir, batchs_per_epoch=batchs_per_epoch)
-    load_train_results_and_plot(save_dir, batchs_per_epoch=batchs_per_epoch)
+    batchs_per_epoch = args.batchs_per_epoch
+
+    # load_verif_results_and_plot(save_dir, batchs_per_epoch=batchs_per_epoch)
+    # load_train_results_and_plot(save_dir, batchs_per_epoch=batchs_per_epoch)
+
+    load_results_and_plot(save_dir, batchs_per_epoch=batchs_per_epoch)
