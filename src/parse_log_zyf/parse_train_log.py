@@ -149,14 +149,14 @@ def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
 
 if __name__ == '__main__':
 
-#    args = parse_args()
-#    print('input args:', args)
+   args = parse_args()
+   print('input args:', args)
 
-#    log_fn = args.log_path
-#    save_train_detail = args.save_train_detail
+   log_fn = args.log_path
+   save_train_detail = args.save_train_detail
 
-    log_fn = './train-log-r100-0221.txt'
-    save_train_detail = False
+    # log_fn = './train-log-r100-0221.txt'
+    # save_train_detail = False
 
     if args.save_dir:
         save_dir = args.save_dir
