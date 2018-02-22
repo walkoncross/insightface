@@ -74,14 +74,17 @@ def load_train_results_and_plot(save_dir, train_rlt_fn=None, batches_per_epoch=0
         plt.xlabel(x_label)
         plt.ylabel('train acc')
 
+        plt.grid(True, which='major', lw=2)
+
         ax = plt.gca()
         minorLocator = AutoMinorLocator(5)
         ax.xaxis.set_minor_locator(minorLocator)
         minorLocator = AutoMinorLocator(5)
         ax.yaxis.set_minor_locator(minorLocator)
         # plt.minorticks_on()
+        plt.grid(True, which='minor', ls='--')
 
-        plt.grid(True, which='both')
+        # plt.grid(True, which='both')
 
         plt.legend(loc='lower right')
         plt.show()
@@ -144,14 +147,17 @@ def load_verif_results_and_plot(save_dir, verif_rlt_fn=None, batches_per_epoch=0
         plt.xlabel(x_label)
         plt.ylabel('verif acc')
 
+        plt.grid(True, which='major', lw=2)
+
         ax = plt.gca()
         minorLocator = AutoMinorLocator(5)
         ax.xaxis.set_minor_locator(minorLocator)
         minorLocator = AutoMinorLocator(5)
         ax.yaxis.set_minor_locator(minorLocator)
         # plt.minorticks_on()
+        plt.grid(True, which='minor', ls='--')
 
-        plt.grid(True, which='both')
+        # plt.grid(True, which='both')
         plt.legend(loc='lower right')
         plt.show()
 
