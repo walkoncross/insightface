@@ -106,7 +106,8 @@ def load_verif_results_and_plot(save_dir, verif_rlt_fn=None, batches_per_epoch=0
 
         fig = plt.figure(figsize=(16, 12), dpi=100)
 
-        plt.plot(xx, data[:, 3], colors[0], label=labels[0])
+        # plot acc_avg_dbs vs epoch/batch
+        plt.plot(xx, data[:, 2], colors[0], label=labels[0])
 
         for i in range(1, 5):
             plt.plot(xx, data[:, 4 * i + 1], colors[i], label=labels[i])
