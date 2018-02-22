@@ -14,8 +14,8 @@ import numpy as np
 import matplotlib
 matplotlib.use('agg')
 
-from matplotlib import pyplot as plt
-
+import matplotlib.pyplot as plt
+from matplotlib.ticker import AutoMinorLocator
 
 rlt_train_detail_basename = 'train_acc_detail.txt'
 rlt_train_basename = 'train_acc.txt'
@@ -63,10 +63,26 @@ def load_train_results_and_plot(save_dir, train_rlt_fn=None, batches_per_epoch=0
         # plt.xlim([0, 1e8])
         plt.ylim([0, 1])
 
+        # if not use_batch_idx:
+        #     xtick_stepsize = 5
+        # else:
+        #     xtick_stepsize = 40000
+        # ax = plt.gca()
+        # start, end = ax.get_xlim()
+        # x_grid = np.arange(0, end, xtick_stepsize)
+
         plt.xlabel(x_label)
         plt.ylabel('train acc')
 
-        plt.grid()
+        ax = plt.gca()
+        minorLocator = AutoMinorLocator(5)
+        ax.xaxis.set_minor_locator(minorLocator)
+        minorLocator = AutoMinorLocator(5)
+        ax.yaxis.set_minor_locator(minorLocator)
+        # plt.minorticks_on()
+
+        plt.grid(True, which='both')
+
         plt.legend(loc='lower right')
         plt.show()
 
@@ -117,10 +133,25 @@ def load_verif_results_and_plot(save_dir, verif_rlt_fn=None, batches_per_epoch=0
         # plt.xlim([0, 1e8])
         plt.ylim([0.5, 1])
 
+        # if use_epoch_idx:
+        #     xtick_stepsize = 5
+        # else:
+        #     xtick_stepsize = 4000
+        # ax = plt.gca()
+        # start, end = ax.get_xlim()
+        # x_grid = np.arange(0, end, xtick_stepsize)
+
         plt.xlabel(x_label)
         plt.ylabel('verif acc')
 
-        plt.grid()
+        ax = plt.gca()
+        minorLocator = AutoMinorLocator(5)
+        ax.xaxis.set_minor_locator(minorLocator)
+        minorLocator = AutoMinorLocator(5)
+        ax.yaxis.set_minor_locator(minorLocator)
+        # plt.minorticks_on()
+
+        plt.grid(True, which='both')
         plt.legend(loc='lower right')
         plt.show()
 
