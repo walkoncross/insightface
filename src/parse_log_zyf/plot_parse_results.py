@@ -112,24 +112,30 @@ def load_verif_results_and_plot(save_dir, verif_rlt_fn=None, batches_per_epoch=0
     data = np.loadtxt(verif_rlt_fn, skiprows=1)
     print('loaded data shape: ', data.shape)
 
-    colors = ['g', 'r', 'b', 'c', 'm', 'y']
-    labels = ['avg_dbs', 'lfw', 'cfp_ff', 'cfp_fp', 'age_db', 'age_db_highest']
+    colors = ['g', 'r', 'b', 'c', 'm', 'y', 'k']
+    labels = [
+        'avg_allVers', 'avg_nonFPVers',
+        'lfw', 'cfp_ff', 'cfp_fp', 'age_db',
+        'age_db_highest'
+    ]
 
     def plot_data(use_epoch_idx=False):
-        xx = data[:, 1]
         if use_epoch_idx > 0:
-            xx /= batches_per_epoch
+            xx = data[:, 0]
             x_label = 'epoch'
         else:
+            xx = data[:, 1]
             x_label = 'batch'
 
         fig = plt.figure(figsize=(16, 12), dpi=100)
 
-        # plot acc_avg_dbs vs epoch/batch
+        # plot acc_avg_allVers vs epoch/batch
         plt.plot(xx, data[:, 2], colors[0], label=labels[0])
+        # plot acc_avg_nonFPVers vs epoch/batch
+        plt.plot(xx, data[:, 3], colors[1], label=labels[1])
 
-        for i in range(1, 5):
-            plt.plot(xx, data[:, 4 * i + 1], colors[i], label=labels[i])
+        for i in range(0, 4):
+            plt.plot(xx, data[:, 4 * i + 6], colors[i+2], label=labels[i+2])
 
 #        plt.plot(xx, data[:, -1], colors[-1], label=labels[-1])
 

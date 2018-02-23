@@ -57,11 +57,12 @@ def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
     write_string = 'epoch\ttrain-acc\ttime-cost\n'
     fp_out_train.write(write_string)
 
-    write_string = 'epoch\tbatch\tacc_avg_verifDB'
+    write_string = 'epoch\tbatch\tacc_avg_allVerDB\tacc_avg_nonFPVerDB'
     write_string += '\tinfer_time(lfw)\txnorm(lfw)\tacc(lfw)\tacc_std(lfw)'
     write_string += '\tinfer_time(cfp_ff)\txnorm(cfp_ff)\tacc(cfp_ff)\tacc_std(cfp_ff)'
     write_string += '\tinfer_time(cfp_fp)\txnorm(cfp_fp)\tacc(cfp_fp)\tacc_std(cfp_fp)'
-    write_string += '\tinfer_time(age)\txnorm(age)\tacc(age)\tacc_std(age)\tAccuracy-Highest\n'
+    write_string += '\tinfer_time(age)\txnorm(age)\tacc(age)\tacc_std(age)'
+    write_string += '\tHighest-Acc(age)\n'
     fp_out_verif.write(write_string)
 
     train_write_string = ''
@@ -73,6 +74,9 @@ def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
 
     verif_acc_avg = 0.0
     verif_db_cnt = 0
+
+    verif_acc_avg2 = 0.0
+    verif_db_cnt2 = 0
 
     for line in fp:
         line_cnt += 1
@@ -119,16 +123,29 @@ def parse_train_log(log_fn, save_dir=None, save_train_detail=False):
             verif_acc_avg += float(acc[0])
             verif_db_cnt += 1
 
+            if 'cfp_fp' not in line:
+                verif_acc_avg2 += float(acc[0])
+                verif_db_cnt2 += 1
+
             verif_write_string += '\t{:10}\t{:10}'.format(acc[0], acc[1])
 
         if 'Accuracy-Highest:' in line:
             verif_write_string += '\t{:10}\n'.format(line.split()[-1])
-            fp_out_verif.write('{:5.2f}\t{:10}\t{:10}'.format(
-                float(test_batch_idx) / batches_per_epoch,  test_batch_idx, verif_acc_avg / verif_db_cnt) + verif_write_string)
+            verif_write_string2 = '{:5.2f}\t{:10}\t{:5.4f}\t{:5.4f}'.format(
+                float(test_batch_idx) / batches_per_epoch,
+                test_batch_idx,
+                verif_acc_avg / verif_db_cnt,
+                verif_acc_avg2 / verif_db_cnt2
+                )
+            verif_write_string2 += verif_write_string
+
+            fp_out_verif.write(verif_write_string2)
 
             verif_write_string = ''
             verif_acc_avg = 0.0
             verif_db_cnt = 0
+            verif_acc_avg2 = 0.0
+            verif_db_cnt2 = 0
 
         if line_cnt % 1000 == 0:
             print('---> {} lines processed'.format(line_cnt))
