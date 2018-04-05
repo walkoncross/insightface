@@ -830,6 +830,7 @@ def train_net(args):
 
 
     highest_acc = [0.0, 0.0]  #lfw and target
+    highest_avg_acc = [0.0, 0.0] # avg all verif dataset, and avg except cfp_fp
     #for i in xrange(len(ver_list)):
     #  highest_acc.append(0.0)
     global_step = [0]
@@ -865,14 +866,32 @@ def train_net(args):
         do_save = False
         if len(acc_list)>0:
           lfw_score = acc_list[0]
+          
+          acc_arr = np.array(acc_list)
+          avg_all = acc_arr.mean()
+          avg_nofp = (acc_arr.sum() - acc_arr[-2]) / 3.0
+
+
           if lfw_score>highest_acc[0]:
             highest_acc[0] = lfw_score
             if lfw_score>=0.998:
               do_save = True
+
           if acc_list[-1]>=highest_acc[-1]:
             highest_acc[-1] = acc_list[-1]
             if lfw_score>=0.99:
               do_save = True
+
+          if avg_all>=highest_avg_acc[0]:
+                highest_avg_acc[0] = avg_all
+            if lfw_score>=0.99:
+              do_save = True
+
+          if avg_nofp>=highest_avg_acc[-1]:
+                highest_avg_acc[-1] = avg_nofp
+            if lfw_score>=0.99:
+              do_save = True
+
         if args.ckpt==0:
           do_save = False
         elif args.ckpt>1:
