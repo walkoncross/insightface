@@ -804,8 +804,6 @@ def train_net(args):
         ver_name_list.append(name)
         print('ver', name)
 
-
-
     def ver_test(nbatch):
       results = []
       for i in xrange(len(ver_list)):
@@ -883,12 +881,12 @@ def train_net(args):
               do_save = True
 
           if avg_all>=highest_avg_acc[0]:
-                highest_avg_acc[0] = avg_all
+            highest_avg_acc[0] = avg_all
             if lfw_score>=0.99:
               do_save = True
 
           if avg_nofp>=highest_avg_acc[-1]:
-                highest_avg_acc[-1] = avg_nofp
+            highest_avg_acc[-1] = avg_nofp
             if lfw_score>=0.99:
               do_save = True
 
